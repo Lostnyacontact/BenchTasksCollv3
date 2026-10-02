@@ -1,0 +1,120 @@
+name: Assemble Final Pool
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out finalpool
+        uses: actions/checkout@v4
+        with:
+          ref: finalpool
+          fetch-depth: 0
+
+      - name: Copy implemented tasks
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin '+refs/heads/*:refs/remotes/origin/*' --tags
+
+          rm -rf tasks/finalpool
+          mkdir -p tasks/finalpool
+
+          copy_task() {
+            branch="$1"
+            developer="$2"
+            task="$3"
+            git archive "origin/${branch}" "tasks/${developer}/${task}" \
+              | tar -x -C tasks/finalpool --strip-components=2
+          }
+
+          copy_task lueyang-dev lueyang activity-logger
+          copy_task yuzhen-dev yuzhen alert-system
+          copy_task lv lv analytics-dashboard
+          copy_task yuxuan-dev yuxuan asset-optimizer
+          copy_task xiaochen_dev xiaochen backup-utility
+          copy_task gyy gyy blog-engine
+          copy_task junteng_dev junteng booking-system
+          copy_task wenshuo-dev wenshuo cache-optimizer
+          copy_task junteng_dev junteng calendar-sync
+          copy_task ruige ruige canvas-automation
+          copy_task jl_dev jl canvas-grade-automation
+          copy_task zhaochen zhaochen certificate-manager
+          copy_task lv lv chat-bot
+          copy_task lueyang-dev lueyang client-portal
+          copy_task gyy gyy cms-builder
+          copy_task junteng_dev junteng contact-manager
+          copy_task yuxuan-dev yuxuan content-manager
+          copy_task gyy gyy content-scheduler
+          copy_task fan-dev fan coupon-manager
+          copy_task lueyang-dev lueyang crm-system
+          copy_task jl_dev jl customer-feedback-processor
+          copy_task ruige ruige data-analytics
+          copy_task yuzhen-dev yuzhen data-validator
+          copy_task lueyang-dev lueyang deal-manager
+          copy_task xiaochen_dev xiaochen deployment-tool
+          copy_task fan-dev fan discount-calculator
+          copy_task lueyang-dev lueyang email-campaign
+          copy_task jl_dev jl email-classification-system
+          copy_task xiaochen_dev xiaochen error-tracker
+          copy_task ruige ruige expense-tracker
+          copy_task lv lv feedback-collector
+          copy_task ruige ruige file-manager
+          copy_task lueyang-dev lueyang follow-up-reminder
+          copy_task yuzhen-dev yuzhen form-builder
+          copy_task xiaochen_dev xiaochen health-monitor
+          copy_task junteng_dev junteng help-desk
+          copy_task wenshuo-dev wenshuo image-processor
+          copy_task jl_dev jl inventory-management
+          copy_task yuzhen-dev yuzhen invoice-generator
+          copy_task zhaochen zhaochen load-balancer
+          copy_task ruige ruige log-analyzer
+          copy_task fan-dev fan loyalty-program
+          copy_task haoze haoze media-organizer
+          copy_task xiaochen_dev xiaochen monitoring-agent
+          copy_task yuxuan-dev yuxuan network-analyzer
+          copy_task junteng_dev junteng order-processor
+          copy_task yuzhen-dev yuzhen payment-processor
+          copy_task jl_dev jl pdf-report-generator
+          copy_task yuzhen-dev yuzhen permission-manager
+          copy_task lv lv personalization-service
+          copy_task fan-dev fan price-tracker
+          copy_task junteng_dev junteng product-catalog
+          copy_task junxian_dev junxian qr-generator
+          copy_task junteng_dev junteng reminder-service
+          copy_task gyy gyy robots-handler
+          copy_task lueyang-dev lueyang sales-pipeline
+          copy_task wenshuo-dev wenshuo scheduler
+          copy_task wenshuo-dev wenshuo search-engine
+          copy_task xiaochen_dev xiaochen security-scanner
+          copy_task lv lv sentiment-analyzer
+          copy_task junteng_dev junteng shipment-tracker
+          copy_task junxian_dev junxian social-connector
+          copy_task gyy gyy social-publisher
+          copy_task xiaochen_dev xiaochen status-checker
+          copy_task zhaochen zhaochen storage-manager
+          copy_task haoze haoze streaming-service
+          copy_task haoze haoze subtitle-generator
+          copy_task lv lv survey-builder
+          copy_task yuxuan-dev yuxuan sync-service
+          copy_task gyy gyy tag-manager
+          copy_task yuxuan-dev yuxuan task-scheduler
+          copy_task zhaochen zhaochen template-engine
+          copy_task lueyang-dev lueyang territory-manager
+          copy_task junxian_dev junxian translation-api
+          copy_task haoze haoze video-trimmer
+          copy_task lv lv voice-processor
+          copy_task ruige ruige web-crawler
+
+          test "$(find tasks/finalpool -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 77
+
+          git add tasks/finalpool
+          git commit -m "Assemble final pool of 77 implemented tasks"
+          git push origin HEAD:finalpool
